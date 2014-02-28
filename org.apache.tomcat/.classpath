@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/template-handler.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-juli.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/annotations-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/catalina-ant.jar"/>

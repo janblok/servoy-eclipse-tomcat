@@ -29,7 +29,9 @@ Bundle-ClassPath: lib/annotations-api.jar,
  lib/tomcat-jdbc.jar,
  lib/tomcat-util.jar,
  lib/tomcat7-websocket.jar,
- .,
  lib/tomcat-juli.jar,
- lib/template-handler.jar
-Export-Package: org.apache.tomcat.starter
+ .
+Export-Package: org.apache.catalina.servlets,
+ org.apache.naming,
+ org.apache.naming.resources,
+ org.apache.tomcat.starter
