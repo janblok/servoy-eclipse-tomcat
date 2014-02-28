@@ -1,0 +1,192 @@
+package org.apache.tomcat.starter;
+
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Set;
+
+import javax.servlet.Filter;
+import javax.servlet.DispatcherType;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration.Dynamic;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebServlet;
+import javax.websocket.DeploymentException;
+import javax.websocket.server.ServerContainer;
+import javax.websocket.server.ServerEndpoint;
+import javax.websocket.server.ServerEndpointConfig;
+import javax.websocket.server.ServerEndpointConfig.Configurator;
+
+import org.apache.catalina.Container;
+import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleEvent;
+import org.apache.catalina.LifecycleListener;
+import org.apache.catalina.Service;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
+import org.apache.catalina.startup.Catalina;
+import org.apache.tomcat.Activator;
+import org.apache.tomcat.OSGIWebappClassLoader;
+import org.apache.tomcat.websocket.pojo.PojoEndpointServer;
+import org.apache.tomcat.websocket.pojo.PojoMethodMapping;
+import org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator;
+
+public class TomcatStarter {
+	@SuppressWarnings("unchecked")
+	public static void startTomcat(String dir) {
+		System.setProperty("catalina.home", dir);
+		System.setProperty("catalina.base", dir);
+		
+		
+		Catalina catalina = new Catalina();
+		catalina.setParentClassLoader(new OSGIWebappClassLoader(TomcatStarter.class.getClassLoader()));
+		catalina.load();
+		Service[] services = catalina.getServer().findServices();
+		for (Service service : services) {
+			Container[] containers = service.getContainer().findChildren();
+			for (Container host : containers) {
+				host.addLifecycleListener(new LifecycleListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void lifecycleEvent(LifecycleEvent event) {
+						if (event.getType() == Lifecycle.AFTER_START_EVENT) {
+							Container host = (Container) event.getSource();
+							Container[] contexts = host.findChildren();
+							for (Container container : contexts) {
+								StandardContext sc = (StandardContext) container;
+								sc.filterStop();
+								ServletContext context = sc.getServletContext();
+								ServerContainer serverContainer = (ServerContainer) context
+										.getAttribute("javax.websocket.server.ServerContainer");
+								Set<Class<?>> annotatedClasses = Activator
+										.getActivator().getAnnotatedClasses(
+												context.getContextPath());
+								for (Class<?> cls : annotatedClasses) {
+									ServerEndpoint serverEndpoint = cls
+											.getAnnotation(ServerEndpoint.class);
+									if (serverEndpoint != null) {
+										try {
+											String path = serverEndpoint
+													.value();
+
+											// Method mapping
+											PojoMethodMapping methodMapping = new PojoMethodMapping(
+													cls, serverEndpoint
+															.decoders(), path);
+
+											// ServerEndpointConfig
+											ServerEndpointConfig sec;
+											Class<? extends Configurator> configuratorClazz = serverEndpoint
+													.configurator();
+											Configurator configurator = null;
+											if (configuratorClazz
+													.equals(Configurator.class)) {
+												configuratorClazz = DefaultServerEndpointConfigurator.class;
+											}
+											try {
+												configurator = configuratorClazz
+														.newInstance();
+											} catch (InstantiationException e) {
+												throw new DeploymentException(
+														"serverContainer.configuratorFail",
+														e);
+											} catch (IllegalAccessException e) {
+												throw new DeploymentException(
+														"serverContainer.configuratorFail",
+														e);
+											}
+											sec = ServerEndpointConfig.Builder
+													.create(cls, path)
+													.decoders(
+															Arrays.asList(serverEndpoint
+																	.decoders()))
+													.encoders(
+															Arrays.asList(serverEndpoint
+																	.encoders()))
+													.subprotocols(
+															Arrays.asList(serverEndpoint
+																	.subprotocols()))
+													.configurator(configurator)
+													.build();
+											sec.getUserProperties()
+													.put(PojoEndpointServer.POJO_METHOD_MAPPING_KEY,
+															methodMapping);
+
+											serverContainer.addEndpoint(sec);
+										} catch (DeploymentException e) {
+											e.printStackTrace();
+										}
+									} else {
+										WebFilter webFilter = cls
+												.getAnnotation(WebFilter.class);
+										if (webFilter != null) {
+											String name = webFilter.filterName();
+											if (name == null || name.equals(""))
+												name = cls.getName();
+											try {
+												Filter filter = (Filter) cls.newInstance();
+												  FilterDef filterDef = new FilterDef();
+										            filterDef.setFilterName(name);
+										            filterDef.setFilter(filter);
+										            filterDef.setFilterClass(cls.getName());
+										            for(WebInitParam param: webFilter.initParams()) {
+										            	filterDef.addInitParameter(param.name(), param.value());
+										            }
+										            sc.addFilterDef(filterDef);
+										            FilterMap map = new FilterMap();
+										            for (DispatcherType type : webFilter.dispatcherTypes()) {
+										            	map.setDispatcher(type.name());
+													}
+										            map.setFilterName(name);
+										            String[] urlPatterns = webFilter.urlPatterns();
+										            for (String urlPattern : urlPatterns) {
+										            	map.addURLPattern(urlPattern);
+													}
+										            sc.addFilterMap(map);
+										    } catch (Exception e) {
+												e.printStackTrace();
+											}
+											
+										} else {
+											WebServlet webServlet = cls
+													.getAnnotation(WebServlet.class);
+											if (webServlet != null) {
+												String name = webServlet.name();
+												if (name == null || name.equals(""))
+													name = cls.getName();
+												try {
+													Servlet servlet = (Servlet) cls.newInstance();
+													Wrapper wrapper = sc.createWrapper();
+													wrapper.setName(name);
+													wrapper.setServletClass(cls.getName());
+													wrapper.setServlet(servlet);
+													sc.addChild(wrapper);
+													Dynamic servletConfig = sc.dynamicServletAdded(wrapper);
+													servletConfig.addMapping(webServlet.urlPatterns());
+													servletConfig.addMapping(webServlet.value());
+													for (WebInitParam param : webServlet.initParams()) {
+														servletConfig.setInitParameter(param.name(), param.value());
+													}
+												} catch (Exception e) {
+													e.printStackTrace();
+												} 
+											}
+										}
+									}
+										
+								}
+								sc.filterStart();
+							}
+						}
+					}
+				});
+			}
+		}
+		catalina.start();
+	}
+}
