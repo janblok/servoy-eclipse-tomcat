@@ -3,7 +3,7 @@ package org.apache.tomcat;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.tomcat.starter.IServiceProvider;
+import org.apache.tomcat.starter.IServicesProvider;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -15,7 +15,7 @@ public class Activator implements BundleActivator {
 
 	private static Activator self;
 	
-	private final  Set<IServiceProvider> serviceProviders = new HashSet<IServiceProvider>();
+	private final  Set<IServicesProvider> serviceProviders = new HashSet<IServicesProvider>();
 	private BundleContext context;
 
 	public static Activator getActivator() {
@@ -35,13 +35,13 @@ public class Activator implements BundleActivator {
 		context = bundleContext;
 		
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint(IServiceProvider.EXTENSION_ID);
+		IExtensionPoint ep = reg.getExtensionPoint(IServicesProvider.EXTENSION_ID);
 		IExtension[] extensions = ep.getExtensions();
 		if (extensions != null && extensions.length > 0)
 		{
 			for (IExtension extension : extensions)
 			{
-				IServiceProvider provider = (IServiceProvider)extension.getConfigurationElements()[0].createExecutableExtension("class");
+				IServicesProvider provider = (IServicesProvider)extension.getConfigurationElements()[0].createExecutableExtension("class");
 				provider.registerServices();
 				serviceProviders.add(provider);
 			}
@@ -50,7 +50,7 @@ public class Activator implements BundleActivator {
 	
 	public Set<Class<?>> getAnnotatedClasses(String context) {
 		Set<Class<?>> classes = new HashSet<Class<?>>();
-		for (IServiceProvider serviceProvider : serviceProviders) {
+		for (IServicesProvider serviceProvider : serviceProviders) {
 			Set<Class<?>> annotatedClasses = serviceProvider.getAnnotatedClasses(context);
 			if (annotatedClasses != null) classes.addAll(annotatedClasses);
 		}
