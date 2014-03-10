@@ -8,7 +8,7 @@ Bundle-Vendor: Servoy
 Require-Bundle: org.eclipse.core.runtime,
  javax.servlet;bundle-version="3.0.0",
  javax.servlet.jsp;bundle-version="2.2.0",
- javax.websocket-api;bundle-version="1.0.0"
+ javax.websocket;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/annotations-api.jar,
