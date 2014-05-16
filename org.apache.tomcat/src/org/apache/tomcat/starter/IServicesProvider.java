@@ -3,7 +3,7 @@ package org.apache.tomcat.starter;
 import java.util.Set;
 
 public interface IServicesProvider {
-	static final String EXTENSION_ID = "org.apache.tomcat.serviceprovider"; //$NON-NLS-1$
+	static final String EXTENSION_ID = "org.apache.tomcat.serviceprovider";
 	
 	void registerServices();
 
