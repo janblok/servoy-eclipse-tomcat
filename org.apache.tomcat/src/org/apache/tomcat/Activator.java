@@ -11,29 +11,34 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-public class Activator implements BundleActivator {
+public class Activator implements BundleActivator
+{
 
 	private static Activator self;
-	
-	private final  Set<IServicesProvider> serviceProviders = new HashSet<IServicesProvider>();
+
+	private final Set<IServicesProvider> serviceProviders = new HashSet<IServicesProvider>();
 	private BundleContext context;
 
-	public static Activator getActivator() {
+	public static Activator getActivator()
+	{
 		return self;
 	}
-	
-	public BundleContext getContext() {
+
+	public BundleContext getContext()
+	{
 		return context;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void start(BundleContext bundleContext) throws Exception {
+	public void start(BundleContext bundleContext) throws Exception
+	{
 		self = this;
 		context = bundleContext;
-		
+
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint ep = reg.getExtensionPoint(IServicesProvider.EXTENSION_ID);
 		IExtension[] extensions = ep.getExtensions();
@@ -47,11 +52,13 @@ public class Activator implements BundleActivator {
 			}
 		}
 	}
-	
-	public Set<Class<?>> getAnnotatedClasses(String context) {
-		Set<Class<?>> classes = new HashSet<Class<?>>();
-		for (IServicesProvider serviceProvider : serviceProviders) {
-			Set<Class<?>> annotatedClasses = serviceProvider.getAnnotatedClasses(context);
+
+	public Set<Class< ? >> getAnnotatedClasses(String ctx)
+	{
+		Set<Class< ? >> classes = new HashSet<Class< ? >>();
+		for (IServicesProvider serviceProvider : serviceProviders)
+		{
+			Set<Class< ? >> annotatedClasses = serviceProvider.getAnnotatedClasses(ctx);
 			if (annotatedClasses != null) classes.addAll(annotatedClasses);
 		}
 		return classes;
@@ -59,10 +66,11 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void stop(BundleContext bundleContext) throws Exception {
+	public void stop(BundleContext bundleContext) throws Exception
+	{
 		context = null;
 	}
-
 }
