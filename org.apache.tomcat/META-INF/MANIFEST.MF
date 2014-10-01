@@ -6,17 +6,17 @@ Bundle-Version: 7.0.52
 Bundle-Activator: org.apache.tomcat.Activator
 Bundle-Vendor: Servoy
 Require-Bundle: org.eclipse.core.runtime,
- javax.servlet;bundle-version="3.0.0",
- javax.servlet.jsp;bundle-version="2.2.0",
- javax.websocket;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+ javax.servlet,
+ javax.servlet.jsp,
+ javax.websocket
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/annotations-api.jar,
  lib/catalina-ant.jar,
  lib/catalina-ha.jar,
  lib/catalina-tribes.jar,
  lib/catalina.jar,
- lib/ecj-4.3.1.jar,
+ lib/ecj-4.4.jar,
  lib/el-api.jar,
  lib/jasper-el.jar,
  lib/jasper.jar,
@@ -28,10 +28,13 @@ Bundle-ClassPath: lib/annotations-api.jar,
  lib/tomcat-i18n-ja.jar,
  lib/tomcat-jdbc.jar,
  lib/tomcat-util.jar,
- lib/tomcat7-websocket.jar,
  lib/tomcat-juli.jar,
+ lib/catalina-storeconfig.jar,
+ lib/tomcat-jni.jar,
+ lib/tomcat-spdy.jar,
+ lib/tomcat-util-scan.jar,
+ lib/tomcat-websocket.jar,
  .
 Export-Package: org.apache.catalina.servlets,
  org.apache.naming,
- org.apache.naming.resources,
  org.apache.tomcat.starter
