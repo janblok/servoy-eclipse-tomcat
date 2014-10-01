@@ -24,11 +24,12 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Service;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.deploy.FilterDef;
-import org.apache.catalina.deploy.FilterMap;
 import org.apache.catalina.startup.Catalina;
+import org.apache.catalina.webresources.TomcatURLStreamHandlerFactory;
 import org.apache.tomcat.Activator;
 import org.apache.tomcat.OSGIWebappClassLoader;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.websocket.pojo.PojoEndpointServer;
 import org.apache.tomcat.websocket.pojo.PojoMethodMapping;
 import org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator;
@@ -37,6 +38,7 @@ public class TomcatStarter
 {
 	public static void startTomcat(String dir)
 	{
+		TomcatURLStreamHandlerFactory.disable();
 		System.setProperty("catalina.home", dir);
 		System.setProperty("catalina.base", dir);
 
