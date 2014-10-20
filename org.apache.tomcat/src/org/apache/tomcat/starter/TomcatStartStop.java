@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014 Servoy BV
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.tomcat.starter;
 
 import java.util.Arrays;
@@ -34,17 +50,22 @@ import org.apache.tomcat.websocket.pojo.PojoEndpointServer;
 import org.apache.tomcat.websocket.pojo.PojoMethodMapping;
 import org.apache.tomcat.websocket.server.DefaultServerEndpointConfigurator;
 
-public class TomcatStarter
+/**
+ * Actual tomcat starter.
+ * @author jcompagner
+ */
+public class TomcatStartStop
 {
+	private static Catalina catalina = null;
+
 	public static void startTomcat(String dir)
 	{
 		TomcatURLStreamHandlerFactory.disable();
 		System.setProperty("catalina.home", dir);
 		System.setProperty("catalina.base", dir);
 
-
-		Catalina catalina = new Catalina();
-		catalina.setParentClassLoader(new OSGIWebappClassLoader(TomcatStarter.class.getClassLoader()));
+		catalina = new Catalina();
+		catalina.setParentClassLoader(new OSGIWebappClassLoader(TomcatStartStop.class.getClassLoader()));
 		catalina.load();
 		Service[] services = catalina.getServer().findServices();
 		for (Service service : services)
@@ -191,5 +212,17 @@ public class TomcatStarter
 			}
 		}
 		catalina.start();
+	}
+
+	public static void stop()
+	{
+		try
+		{
+			if (catalina != null) catalina.stop();
+		}
+		catch (Throwable ex)
+		{
+			//fail silently
+		}
 	}
 }

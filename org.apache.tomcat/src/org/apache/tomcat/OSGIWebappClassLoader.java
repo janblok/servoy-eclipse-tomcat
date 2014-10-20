@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014 Servoy BV
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.tomcat;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -5,33 +21,50 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 
-public class OSGIWebappClassLoader extends ClassLoader {
+/**
+ * Helper classloader.
+ * @author jcompagner
+ */
+public class OSGIWebappClassLoader extends ClassLoader
+{
 	private final CopyOnWriteArrayList<Bundle> usedBundles = new CopyOnWriteArrayList<Bundle>();
-	
-	public OSGIWebappClassLoader() {
+
+	public OSGIWebappClassLoader()
+	{
 		super();
 	}
-	
-	public OSGIWebappClassLoader(ClassLoader parent) {
+
+	public OSGIWebappClassLoader(ClassLoader parent)
+	{
 		super(parent);
 	}
-	
+
 	@Override
-	public Class<?> findClass(String name) throws ClassNotFoundException {
-		try {
+	public Class< ? > findClass(String name) throws ClassNotFoundException
+	{
+		try
+		{
 			return super.findClass(name);
-		} catch (ClassNotFoundException e) {
-			ServiceReference<?> serviceReference = Activator.getActivator().getContext().getServiceReference(name);
-			if (serviceReference != null) {
+		}
+		catch (ClassNotFoundException e)
+		{
+			ServiceReference< ? > serviceReference = Activator.getActivator().getContext().getServiceReference(name);
+			if (serviceReference != null)
+			{
 				usedBundles.add(serviceReference.getBundle());
 				return serviceReference.getBundle().loadClass(name);
 			}
-			else {
+			else
+			{
 				// now try to resolve it through the bundles that did provide a service.
-				for (Bundle bundle : usedBundles) {
-					try {
+				for (Bundle bundle : usedBundles)
+				{
+					try
+					{
 						return bundle.loadClass(name);
-					} catch(ClassNotFoundException ex) {
+					}
+					catch (ClassNotFoundException ex)
+					{
 						// ignore
 					}
 				}
