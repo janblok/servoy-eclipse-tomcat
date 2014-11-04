@@ -5,10 +5,7 @@ Bundle-SymbolicName: org.apache.tomcat;singleton:=true
 Bundle-Version: 8.0.14
 Bundle-Activator: org.apache.tomcat.Activator
 Bundle-Vendor: Servoy
-Require-Bundle: org.eclipse.core.runtime,
- javax.servlet,
- javax.servlet.jsp,
- javax.websocket
+Require-Bundle: org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/annotations-api.jar,
@@ -38,3 +35,8 @@ Bundle-ClassPath: lib/annotations-api.jar,
 Export-Package: org.apache.catalina.servlets,
  org.apache.naming,
  org.apache.tomcat.starter
+Import-Package: javax.servlet;version="3.0.0",
+ javax.servlet.annotation;version="3.0.0",
+ javax.websocket;version="1.1.0",
+ javax.websocket.server;version="1.1.0",
+ org.osgi.framework
