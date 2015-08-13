@@ -43,7 +43,6 @@ Import-Package: javax.servlet,
  javax.servlet.jsp.el,
  javax.servlet.jsp.resources,
  javax.servlet.jsp.tagext,
- javax.servlet.resources,
  javax.websocket,
  javax.websocket.server,
  org.osgi.framework
