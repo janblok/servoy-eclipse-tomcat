@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry exported="true" kind="lib" path="lib/catalina-storeconfig.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-jni.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tomcat-spdy.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-util-scan.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-websocket.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
@@ -13,7 +12,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/catalina-ha.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/catalina-tribes.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/catalina.jar" sourcepath="d:/downloads/apache-tomcat-8.0.14-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/ecj-4.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/el-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jasper-el.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jasper.jar"/>
@@ -25,6 +23,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-i18n-ja.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-jdbc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-util.jar" sourcepath="T:/apache-tomcat-7.0.52-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/ecj-4.4.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tomcat-juli.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

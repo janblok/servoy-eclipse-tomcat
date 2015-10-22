@@ -100,7 +100,7 @@ public class TomcatStartStop
 											String path = serverEndpoint.value();
 
 											// Method mapping
-											PojoMethodMapping methodMapping = new PojoMethodMapping(cls, serverEndpoint.decoders(), path);
+											PojoMethodMapping methodMapping = new PojoMethodMapping(cls, Arrays.asList(serverEndpoint.decoders()), path);
 
 											// ServerEndpointConfig
 											ServerEndpointConfig sec;
@@ -123,8 +123,8 @@ public class TomcatStartStop
 												throw new DeploymentException("serverContainer.configuratorFail", e);
 											}
 											sec = ServerEndpointConfig.Builder.create(cls, path).decoders(Arrays.asList(serverEndpoint.decoders())).encoders(
-												Arrays.asList(serverEndpoint.encoders())).subprotocols(Arrays.asList(serverEndpoint.subprotocols())).configurator(
-												configurator).build();
+												Arrays.asList(serverEndpoint.encoders())).subprotocols(
+													Arrays.asList(serverEndpoint.subprotocols())).configurator(configurator).build();
 											sec.getUserProperties().put(PojoEndpointServer.POJO_METHOD_MAPPING_KEY, methodMapping);
 
 											serverContainer.addEndpoint(sec);
